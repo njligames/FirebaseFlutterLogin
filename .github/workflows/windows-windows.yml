@@ -1,0 +1,51 @@
+name: Build Flutter Windows App
+
+# Controls when the action will run
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs
+jobs:
+  build-windows:
+    # The type of runner that the job will run on (Windows machine)
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed
+    steps:
+      # Checks out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v3
+
+      # Sets up Flutter environment with Windows desktop support
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2' # Use a recent version supporting desktop builds
+          channel: 'stable'
+          cache: true
+
+      # Enable Windows desktop support
+      - name: Enable Windows Desktop Support
+        run: flutter config --enable-windows-desktop
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Run tests (optional, if you have tests set up)
+      - name: Run Tests
+        run: flutter test
+
+      # Build the Windows app (release mode for optimized build)
+      - name: Build Windows App
+        run: flutter build windows --release
+
+      # Upload the Windows build as an artifact (optional, for downloading after build)
+      - name: Upload Windows Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows/x64/Release/
+          if-no-files-found: error
