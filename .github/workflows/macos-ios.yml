@@ -1,52 +1,47 @@
 name: Build Flutter iOS App
 
-# Controls when the action will run
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
 
-# A workflow run is made up of one or more jobs
 jobs:
   build-ios:
-    # The type of runner that the job will run on (macOS machine)
     runs-on: macos-latest
-
-    # Steps represent a sequence of tasks that will be executed
     steps:
-      # Checks out your repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v3
-
-      # Sets up Flutter environment with iOS support
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.32.8' # Use a recent version supporting iOS builds
+          flutter-version: '3.32.8'
           channel: 'stable'
           cache: true
-
-      # Install dependencies
       - name: Install Dependencies
         run: flutter pub get
-
-          # # Run tests (optional, if you have tests set up)
           # - name: Run Tests
           #   run: flutter test
-
-      # Build the iOS app (debug mode without code signing for CI simplicity)
-      # - name: Build iOS App
-      #   run: flutter build ios --debug --no-codesign
-
-
-      - name: Build iOS App with Experimental Features
-        run: flutter build ios --debug --no-codesign --extra-front-end-options='-enable-experimental-feature AccessLevelOnImport'
-
-
-
-
-
-      # Upload the iOS build as an artifact (optional, for downloading after build)
+      - name: Select Xcode Version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.0.app || sudo xcode-select -s /Applications/Xcode_14.3.app || echo "Specified Xcode version not found, using default"
+          xcodebuild -version
+          swift --version
+      - name: Clean Pods
+        working-directory: ios
+        run: |
+          rm -rf Pods
+          rm Podfile.lock
+      - name: Update Podfile with Specific Firebase Version
+        working-directory: ios
+        run: |
+          sed -i '' 's|pod "Firebase/Auth"|pod "Firebase/Auth", "~> 10.11.0"|' Podfile || echo "Firebase/Auth not found, adding manually"
+          sed -i '' 's|pod "Firebase/Core"|pod "Firebase/Core", "~> 10.11.0"|' Podfile || echo "Firebase/Core not found, adding manually"
+          cat Podfile
+      - name: Install Pods
+        working-directory: ios
+        run: pod install
+      - name: Build iOS App
+        run: flutter build ios --debug --no-codesign
       - name: Upload iOS Build
         uses: actions/upload-artifact@v4
         with:
