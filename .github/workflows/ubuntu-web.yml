@@ -1,0 +1,47 @@
+name: Build Flutter Web App
+
+# Controls when the action will run
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs
+jobs:
+  build-web:
+    # The type of runner that the job will run on (Linux machine)
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed
+    steps:
+      # Checks out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v3
+
+      # Sets up Flutter environment with web support
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2' # Use a recent version supporting web builds
+          channel: 'stable'
+          cache: true
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Run tests (optional, if you have tests set up)
+      - name: Run Tests
+        run: flutter test
+
+      # Build the web app for Chrome (release mode for optimized build)
+      - name: Build Web App
+        run: flutter build web --release
+
+      # Upload the web build as an artifact (optional, for downloading after build)
+      - name: Upload Web Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web/
+          if-no-files-found: error
