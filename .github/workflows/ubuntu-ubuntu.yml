@@ -1,0 +1,57 @@
+name: Build Flutter Ubuntu App
+
+# Controls when the action will run
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs
+jobs:
+  build-ubuntu:
+    # The type of runner that the job will run on (Linux machine)
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed
+    steps:
+      # Checks out your repository under $GITHUB_WORKSPACE
+      - uses: actions/checkout@v3
+
+      # Installs required Linux dependencies for Flutter desktop builds
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      # Sets up Flutter environment with Linux desktop support
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.32.8' # Use a recent version supporting desktop builds
+          channel: 'stable'
+          cache: true
+
+      # Enable Linux desktop support
+      - name: Enable Linux Desktop Support
+        run: flutter config --enable-linux-desktop
+
+      # Install dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+          # # Run tests (optional, if you have tests set up)
+          # - name: Run Tests
+          #   run: flutter test
+
+      # Build the Ubuntu app (release mode for optimized build)
+      - name: Build Ubuntu App
+        run: flutter build linux --release
+
+      # Upload the Linux build as an artifact (optional, for downloading after build)
+      - name: Upload Ubuntu Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-build
+          path: build/linux/x64/release/bundle/
+          if-no-files-found: error
