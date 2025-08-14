@@ -1,4 +1,4 @@
-name: Flutter CI
+name: Build Flutter Android App
 
 # Controls when the action will run
 on:
