@@ -40,7 +40,7 @@ jobs:
 
 
       - name: Build iOS App with Experimental Features
-        run: flutter build ios --debug --no-codesign --extra-front-end-options=-enable-experimental-feature AccessLevelOnImport
+        run: flutter build ios --debug --no-codesign --extra-front-end-options='-enable-experimental-feature AccessLevelOnImport'
 
 
 
