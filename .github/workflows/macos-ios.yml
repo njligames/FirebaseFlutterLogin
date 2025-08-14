@@ -35,8 +35,16 @@ jobs:
           #   run: flutter test
 
       # Build the iOS app (debug mode without code signing for CI simplicity)
-      - name: Build iOS App
-        run: flutter build ios --debug --no-codesign
+      # - name: Build iOS App
+      #   run: flutter build ios --debug --no-codesign
+
+
+      - name: Build iOS App with Experimental Features
+        run: flutter build ios --debug --no-codesign --extra-front-end-options=-enable-experimental-feature,AccessLevelOnImport
+
+
+
+
 
       # Upload the iOS build as an artifact (optional, for downloading after build)
       - name: Upload iOS Build
