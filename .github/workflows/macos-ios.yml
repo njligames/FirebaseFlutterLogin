@@ -30,7 +30,7 @@ jobs:
 
       - name: Build iOS for device (no codesign)
         run: |
-          flutter build ios --debug --no-codesign
+          flutter build ios --debug --simulator
           xcodebuild -workspace ios/Runner.xcworkspace \
                      -scheme Runner \
                      -sdk iphoneos \
