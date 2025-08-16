@@ -41,7 +41,8 @@ jobs:
                      -scheme Runner \
                      -sdk iphoneos \
                      -configuration Debug \
-                     -destination 'generic/platform=iOS' \
+                     -destination 'generic/platform=iOS Simulator,name=iPhone 15' \
+                     CODE_SIGNING_ALLOWED=NO \
                      -allowProvisioningUpdates \
                      build
 
