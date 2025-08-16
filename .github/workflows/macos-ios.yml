@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-15   # ✅ Xcode 16 with iOS 18 SDK
+    runs-on: macos-15   # ✅ macOS 15 has Xcode 16 with iOS 18 SDK
 
     steps:
       - name: Checkout source
@@ -17,7 +17,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.32.8"   # or latest stable you need
+          flutter-version: "3.32.8"
 
       - name: Flutter clean
         run: flutter clean
@@ -27,7 +27,13 @@ jobs:
 
       - name: Build iOS for device (no codesign)
         run: |
-          flutter build ios --debug --no-codesign --target-platform=ios
+          flutter build ios --debug --no-codesign
+          xcodebuild -workspace ios/Runner.xcworkspace \
+                     -scheme Runner \
+                     -sdk iphoneos \
+                     -configuration Debug \
+                     -destination 'generic/platform=iOS' \
+                     build
 
       - name: Upload iOS device build
         uses: actions/upload-artifact@v4
