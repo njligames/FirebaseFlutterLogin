@@ -15,16 +15,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Flutter
-      - name: Install Flutter
+      # Sets up Java environment (required for Android builds)
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu' # Using Zulu distribution which supports Java 24
+          java-version: '24'   # Specify Java version 24 as requested
+
+      # Sets up Flutter environment
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.32.8' # Replace with your Flutter version if needed
+          channel: 'stable'
           cache: true
-
-      # Flutter environment info
-      - name: Flutter doctor
-        run: flutter doctor -v
 
       # Get dependencies
       - name: Install dependencies
@@ -34,9 +38,15 @@ jobs:
       - name: Build APK (Release)
         run: flutter build apk --release
 
-      # Upload artifact
-      - name: Upload APK
+      # (Optional) Build Android App Bundle for Play Store
+      - name: Build AAB (Release)
+        run: flutter build appbundle --release
+
+      # Upload APK + AAB artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: android-builds
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab

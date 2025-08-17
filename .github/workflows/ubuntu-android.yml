@@ -1,4 +1,4 @@
-name: Build Flutter Android App
+name: Build Flutter Android (Ubuntu)
 
 # Controls when the action will run
 on:
