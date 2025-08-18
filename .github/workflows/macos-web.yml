@@ -1,4 +1,4 @@
-name: Build Flutter Web (Ubuntu)
+name: Build Flutter Web (MacOS)
 
 # Controls when the action will run
 on:
@@ -11,7 +11,7 @@ on:
 jobs:
   build-web:
     # The type of runner that the job will run on (Linux machine)
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     # Steps represent a sequence of tasks that will be executed
     steps:
